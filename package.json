@@ -1,7 +1,7 @@
 {
     "name": "qr-svg",
     "description": "Lightweight SVG QR code generator in JavaScript",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "homepage": "https://github.com/jnordberg/qr-svg",
     "license": "MIT",
     "main": "lib/qr-svg.js",
