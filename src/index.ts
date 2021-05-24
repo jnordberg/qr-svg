@@ -1,21 +1,14 @@
 import ErrorCorrectLevel from './ErrorCorrectLevel'
 import QRCode from './QRCode'
 
-interface Rect {
+export interface Rect {
     x: number
     y: number
     width: number
     height: number
 }
 
-/**
- * Generate QR code.
- * @param level Error correction level, one of L (7%), M (15%), Q (25%) or H (30%) defaults to L.
- * @param version QR Size, 1 to 40, defaults to -1 (autodetect).
- * @returns SVG string.
- * @author Johan Nordberg <code@johan-nordberg.com>
- */
-export default function generate(text: string, level: 'L' | 'M' | 'Q' | 'H' = 'L', version = -1) {
+export function render(text: string, level: 'L' | 'M' | 'Q' | 'H' = 'L', version = -1) {
     const qr = new QRCode(version, ErrorCorrectLevel[level])
 
     qr.addData(text)
@@ -58,13 +51,33 @@ export default function generate(text: string, level: 'L' | 'M' | 'Q' | 'H' = 'L
         }
     }
 
-    const svg: string[] = [`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}">`]
-    for (const rects of rows) {
-        for (const {x, y, width, height} of rects) {
-            svg.push(`<rect x="${x}" y="${y}" width="${width}" height="${height}"/>`)
+    const rects: Rect[] = []
+    for (const row of rows) {
+        for (const rect of row) {
+            rects.push(rect)
         }
     }
-    svg.push('</svg>')
 
+    return {rects, size}
+}
+
+export function toSvg(size: number, rects: Rect[]) {
+    const svg: string[] = [`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}">`]
+    for (const {x, y, width, height} of rects) {
+        svg.push(`<rect x="${x}" y="${y}" width="${width}" height="${height}"/>`)
+    }
+    svg.push('</svg>')
     return svg.join('')
+}
+
+/**
+ * Generate QR code.
+ * @param level Error correction level, one of L (7%), M (15%), Q (25%) or H (30%) defaults to L.
+ * @param version QR Size, 1 to 40, defaults to -1 (autodetect).
+ * @returns SVG string.
+ * @author Johan Nordberg <code@johan-nordberg.com>
+ */
+export function QR(text: string, level: 'L' | 'M' | 'Q' | 'H' = 'L', version = -1) {
+    const {size, rects} = render(text, level, version)
+    return toSvg(size, rects)
 }

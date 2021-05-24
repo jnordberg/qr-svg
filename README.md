@@ -16,7 +16,7 @@ npm install --save qr-svg
 ## Usage
 
 ```ts
-import QR from 'qr-svg'
+import {QR} from 'qr-svg'
 
 QR('hello') // <svg ...
 ```
